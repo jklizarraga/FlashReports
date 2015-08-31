@@ -2,40 +2,66 @@
 var tablecolgroup   = '<colgroup><col class="column-item-bullet"><col class="column-item-report"><col class="column-item-remove"></colgroup>';
 var tableheader     = '<thead><tr><th></th><th>Report</th><th></th></tr></thead>';
 var newrowtemplate  = '<tr><td contenteditable="false">&bullet;</td><td contenteditable="true"></td><td><span class="row-remove" onclick="removerow(this)">&cross;</span></td></tr>';
-var addrowtemplate  = '<tr class="table-add-row"><td contenteditable="false"><span class="row-add" onclick="addrow(this)">&plus;</span></td><td contenteditable="false"></td><td></td></tr>';
+var addrowfooter    = '<tfoot><tr class="table-add-row"><td contenteditable="false"><span class="row-add" onclick="addrow(this)">&plus;</span></td><td contenteditable="false"></td><td></td></tr></tfoot>';
 
 var addrow = function (event) {
-    var $thistablebody  = $(event).parents('tbody')     ;
-    var $addrowrow      = $(event).parents('tr'   )     ;
-
-    $addrowrow.remove()                                 ;
-    $thistablebody.append($(newrowtemplate))            ;
-    $thistablebody.append($(addrowtemplate))            ;
+    var  $thistable = $(event).parents('table')                 ;
+    $thistable.append($(newrowtemplate))                        ;
 };
 
 var removerow = function (event) {
-    $(event).parents('tr').remove()                     ;
+    $(event).parents('tr').remove()                             ;
 };
 
 var createtable = function (tableID){
 
-    var $table = $('<table></table>').attr("id",tableID);
+    var $table = $('<table></table>').attr("id",tableID)        ;
 
-    $table.append($(tablecolgroup   ))                  ;
-    $table.append($(tableheader     ))                  ;
-    $table.append($(newrowtemplate  ))                  ;
-    $table.append($(addrowtemplate  ))                  ;
+    $table.append($(tablecolgroup   ))                          ;
+    //$table.append($(tableheader     ))                          ;
+    $table.append($(addrowfooter    ))                          ;
+    $table.append($(newrowtemplate  ))                          ;
 
     return $table
-}
+};
+
+var activatetab = function(element){
+    var $activetab      = $(".tabs span.active")                ;
+    var $activetable    = $(".content #" + $activetab.attr('id'));
+    var $newactivetab   = $(element)                            ;
+    var $newactivetable = $(".content #" + element.id)          ;
+
+    $activetab.removeClass("active")                            ;
+    $activetable.css("display","none")                          ;
+
+    $newactivetab.addClass("active")                            ;
+    $newactivetable.css("display","table")                      ;
+};
 
 var main = function(){
-    "use strict"                                        ;
-    var $main      = $("main")                          ;
-    var $newstable = createtable("news")                ;
+    "use strict"                                                ;
 
-    $main.append($newstable)
-}
+    var tableID     = ["achievements", "news", "issues-concerns", "meeting_conclusions", "future_meetings"              ];
+    var tabTXT      = ["Achievements", "News", "Issues/Concerns", "Meeting conclusions", "Important meetings to come"   ];
+
+    var $maintabs   = $("main .tabs")                           ;
+    var $maintables = $("main .content")                        ;
+
+    tabTXT.forEach(function(element, index){
+        var tab = '<span id="'+ tableID[index] + '" onclick="activatetab(this)">' + element + '</span>' ;
+        $maintabs.append(tab);
+    });
+
+    tableID.forEach(function(element){
+        var $table = createtable(element)                       ;
+        $maintables.append($table)                              ;
+        $table.css("display", "none")                           ;
+    });
+
+    $(".tabs    #achievements").addClass("active")              ;
+    $(".content #achievements").css("display", "table")         ;
+
+};
 
 $(document).ready(main());
 

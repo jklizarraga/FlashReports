@@ -111,6 +111,7 @@ table tr:hover {
     transition: all 0.1s ease-in-out;
 }
 
+/* ====================== Table Header ====================== */
 table th {
     background-color: #dce9f9;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
@@ -147,20 +148,61 @@ table th:last-child {
 table th:only-child{
     -moz-border-radius: 6px 6px 0 0;
     -webkit-border-radius: 6px 6px 0 0;
-    border-radius: 6px 6px 0 0;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
     border: 1px solid #ccc;
 }
 
+/* ====================== Table ====================== */
+table tbody{
+    background-color: white;
+}
+
+/* == Table Grid == */
+/* The grid is built giving each cell the right and bottom borders*/
 table td{
     padding: 10px;
     border-right: 1px solid #ccc;
     border-bottom:1px solid #ccc;
 }
 
+/* The grid needs to be completed by providing the top row with the upper border*/
+table tr:first-child td{
+    border-top: 1px solid #ccc;
+}
+
+/* The grid needs to be completed by providing the left column with the left border*/
 table td:first-child{
     border-left: 1px solid #ccc;
 }
 
+
+/* == Table Round Corners == */
+table tbody tr:first-child td:first-child{
+    border-top-left-radius: 6px;
+}
+
+table tbody tr:last-child td:last-child{
+    border-radius: 0 0 6px 0;
+}
+
+table tbody tr:first-child td:last-child{
+    border-radius: 0 6px 0 0;
+}
+
+table tbody tr:only-child td:last-child{
+    border-radius: 0 6px 6px 0;
+}
+
+table tfoot td:first-child {
+    border-radius: 0 0 6px 6px;
+    border-right: 1px solid #ccc;
+    background-color: #cccccc;
+}
+
+/* == Text alignment per column == */
 table td:first-child, table td:last-child{
     text-align: center;
 }
@@ -169,28 +211,11 @@ table tr td:nth-child(2){
     text-align: justify;
 }
 
-table tr:nth-last-child(2) td:last-child{
-    border-radius: 0 0 6px 0;
-}
-
-table tr:last-child td:first-child {
-    -moz-border-radius: 0 0 0 6px;
-    -webkit-border-radius: 0 0 0 6px;
-    border-radius: 0 0 6px 6px;
-    border-right: 1px solid #ccc;
-    background-color: #cccccc;
-}
-
-table tr:last-child td:nth-last-child(-n+2) {
+table tfoot td:nth-last-child(-n+2) {
     visibility: hidden;
 }
 
-table tr:nth-last-child(1):nth-last-child(2) td:last-child { /*tr:last-child*/
-    -moz-border-radius: 0 0 6px 0;
-    -webkit-border-radius: 0 0 6px 0;
-    border-radius: 0 0 6px 0;
-}
-
+/* == Column width == */
 table col.column-item-bullet{
     width: 10%;
     border-left: solid #ccc 1px;
@@ -204,6 +229,7 @@ table col.column-item-remove{
     width: 10%
 }
 
+/* == Add and remove == */
 .row-add, .row-remove {
     cursor: pointer;
     font-size: large;
@@ -215,6 +241,28 @@ table col.column-item-remove{
 
 .row-remove:hover{
     color: red;
+}
+
+/* ====================== Tabs ====================== */
+.tabs span {
+    border-radius: 5px 5px 0 0;
+    display: inline-block;
+    width: 100px;
+    margin-right: 10px;
+    text-align: center;
+    background: #ddd;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.tabs .active {
+    background: #eee;
+}
+
+main .content {
+    padding: 30px 10px 30px 10px;
+    border-radius: 0 5px 5px 5px;
+    background: #eee;
 }
 
 /* ==========================================================================
