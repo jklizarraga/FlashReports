@@ -1,12 +1,13 @@
 // Definitions
 var tablecolgroup   = '<colgroup><col class="column-item-bullet"><col class="column-item-report"><col class="column-item-remove"></colgroup>';
 var tableheader     = '<thead><tr><th></th><th>Report</th><th></th></tr></thead>';
-var newrowtemplate  = '<tr><td contenteditable="false">&bullet;</td><td contenteditable="true"></td><td><span class="row-remove" onclick="removerow(this)">&cross;</span></td></tr>';
+var newrowtemplate  = '<tr><td contenteditable="false">&bullet;</td><td contenteditable="true" onkeydown="keyboardinputwhenincell(this, event)"></td><td><span class="row-remove" onclick="removerow(this)">&cross;</span></td></tr>';
 var addrowfooter    = '<tfoot><tr class="table-add-row"><td contenteditable="false"><span class="row-add" onclick="addrow(this)">&plus;</span></td><td contenteditable="false"></td><td></td></tr></tfoot>';
 
 var addrow = function (event) {
     var  $thistable = $(event).parents('table')                 ;
     $thistable.append($(newrowtemplate))                        ;
+    $("tbody:last-child tr:last-child td:nth-child(2)", $thistable).focus();
 };
 
 var removerow = function (event) {
@@ -36,6 +37,22 @@ var activatetab = function(element){
 
     $newactivetab.addClass("active")                            ;
     $newactivetable.css("display","table")                      ;
+    $("tbody:last-child tr:last-child td:nth-child(2)", $newactivetable).focus();
+};
+
+var keyboardinputwhenincell = function(element, event) {
+
+    var  $thisrow = $(element).parents('tr')                    ;
+
+    if (event.keyCode === 13){
+        if ($thisrow.is(':last-child')){
+            addrow(element)                                     ;
+        } else{
+            $("td:nth-child(2)", $thisrow.next()).focus()       ;
+        }
+        event.preventDefault()                                  ;
+    }
+
 };
 
 var main = function(){
@@ -60,38 +77,39 @@ var main = function(){
 
     $(".tabs    #achievements").addClass("active")              ;
     $(".content #achievements").css("display", "table")         ;
+    $(".content #achievements tbody:last-child tr:last-child td:nth-child(2)").focus();
 
 };
 
 $(document).ready(main());
 
 /*// A few jQuery helpers for exporting only
-jQuery.fn.pop = [].pop;
-jQuery.fn.shift = [].shift;
+ jQuery.fn.pop = [].pop;
+ jQuery.fn.shift = [].shift;
 
-$BTN.click(function () {
-    var $rows = $TABLE.find('tr:not(:hidden)');
-    var headers = [];
-    var data = [];
+ $BTN.click(function () {
+ var $rows = $TABLE.find('tr:not(:hidden)');
+ var headers = [];
+ var data = [];
 
-    // Get the headers (add special header logic here)
-    $($rows.shift()).find('th:not(:empty)').each(function () {
-        headers.push($(this).text().toLowerCase());
-    });
+ // Get the headers (add special header logic here)
+ $($rows.shift()).find('th:not(:empty)').each(function () {
+ headers.push($(this).text().toLowerCase());
+ });
 
-    // Turn all existing rows into a loopable array
-    $rows.each(function () {
-        var $td = $(this).find('td');
-        var h = {};
+ // Turn all existing rows into a loopable array
+ $rows.each(function () {
+ var $td = $(this).find('td');
+ var h = {};
 
-        // Use the headers from earlier to name our hash keys
-        headers.forEach(function (header, i) {
-            h[header] = $td.eq(i).text();
-        });
+ // Use the headers from earlier to name our hash keys
+ headers.forEach(function (header, i) {
+ h[header] = $td.eq(i).text();
+ });
 
-        data.push(h);
-    });
+ data.push(h);
+ });
 
-    // Output the result
-    $EXPORT.text(JSON.stringify(data));
-});*/
+ // Output the result
+ $EXPORT.text(JSON.stringify(data));
+ });*/
