@@ -42,17 +42,27 @@ var activatetab = function(element){
 
 var keyboardinputwhenincell = function(element, event) {
 
-    var  $thisrow = $(element).parents('tr')                    ;
+    var enterKey = 13                                           ;
+    var arrowUp  = 38                                           ;
+    var arrowDw  = 40                                           ;
+    var $thisrow = $(element).parents('tr')                     ;
 
-    if (event.keyCode === 13 && !event.altKey){
-        event.preventDefault()                                  ;
+    if (event.keyCode === enterKey && !event.altKey){
         if ($thisrow.is(':last-child')){
             addrow(element)                                     ;
         } else{
             $("td:nth-child(2)", $thisrow.next()).focus()       ;
         }
-    } else if (event.keyCode === 13 && event.altKey){
+        event.preventDefault()                                  ;
+    } else if (event.keyCode === enterKey && event.altKey){
         $(element).append("<br><br>")                           ;
+        event.preventDefault()                                  ;
+    } else if (event.keyCode === arrowDw && !($thisrow.is(':last-child'))){
+        $("td:nth-child(2)", $thisrow.next()).focus()           ;
+        event.preventDefault()                                  ;
+    } else if (event.keyCode === arrowUp && !($thisrow.is(':first-child'))){
+        $("td:nth-child(2)", $thisrow.prev()).focus()           ;
+        event.preventDefault()                                  ;
     }
 
 };
