@@ -1,7 +1,7 @@
 // Definitions
 var tablecolgroup   = '<colgroup><col class="column-item-bullet"><col class="column-item-report"><col class="column-item-remove"></colgroup>';
 var tableheader     = '<thead><tr><th></th><th>Report</th><th></th></tr></thead>';
-var newrowtemplate  = '<tr><td contenteditable="false">&bullet;</td><td contenteditable="true" onkeydown="keyboardinputwhenincell(this, event)"></td><td><span class="row-remove" onclick="removerow(this)">&cross;</span></td></tr>';
+var newrowtemplate  = '<tr><td contenteditable="false">&bullet;</td><td contenteditable="true" onkeydown="keyboardinputwhenincell(this, event)" onfocus="onfocuscell(this, event)"></td><td><span class="row-remove" onclick="removerow(this)">&cross;</span></td></tr>';
 var addrowfooter    = '<tfoot><tr class="table-add-row"><td contenteditable="false"><span class="row-add" onclick="addrow(this)">&plus;</span></td><td contenteditable="false"></td><td></td></tr></tfoot>';
 
 var addrow = function (event) {
@@ -44,15 +44,29 @@ var keyboardinputwhenincell = function(element, event) {
 
     var  $thisrow = $(element).parents('tr')                    ;
 
-    if (event.keyCode === 13){
+    if (event.keyCode === 13 && !event.altKey){
+        event.preventDefault()                                  ;
         if ($thisrow.is(':last-child')){
             addrow(element)                                     ;
         } else{
             $("td:nth-child(2)", $thisrow.next()).focus()       ;
         }
-        event.preventDefault()                                  ;
+    } else if (event.keyCode === 13 && event.altKey){
+        $(element).append("<br><br>")                           ;
     }
 
+};
+
+var onfocuscell = function(element, event){
+    var celltext = $(element).text()                            ;
+
+    if (celltext.length > 0){
+        var selection = window.getSelection()                   ;
+
+        if (selection.rangeCount > 0) selection.removeAllRanges();
+        selection.selectAllChildren(element)                    ;
+        selection.collapseToEnd()                               ;
+    }
 };
 
 var main = function(){
