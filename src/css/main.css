@@ -88,7 +88,7 @@ textarea {
    Author's custom styles
    ========================================================================== */
 body {
-    width: 600px;
+    width: 900px;
     margin: 40px auto;
     font-family: 'trebuchet MS', 'Lucida sans', Arial;
     font-size: 14px;
@@ -247,7 +247,7 @@ table col.column-item-remove{
 .tabs span {
     border-radius: 5px 5px 0 0;
     display: inline-block;
-    width: 100px;
+    width: 160px;
     margin-right: 10px;
     text-align: center;
     background: #ddd;
@@ -263,6 +263,10 @@ main .content {
     padding: 30px 10px 30px 10px;
     border-radius: 0 5px 5px 5px;
     background: #eee;
+}
+
+p {
+    margin: 5px;
 }
 
 /* ==========================================================================

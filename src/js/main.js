@@ -7,7 +7,10 @@ var addrowfooter    = '<tfoot><tr class="table-add-row"><td contenteditable="fal
 var addrow = function (event) {
     var  $thistable = $(event).parents('table')                 ;
     $thistable.append($(newrowtemplate))                        ;
-    $("tbody:last-child tr:last-child td:nth-child(2)", $thistable).focus();
+
+    var $newcell = $("tbody:last-child tr:last-child td:nth-child(2)", $thistable);
+    $newcell.focus();
+    $newcell.empty();
 };
 
 var removerow = function (event) {
@@ -40,42 +43,95 @@ var activatetab = function(element){
     $("tbody:last-child tr:last-child td:nth-child(2)", $newactivetable).focus();
 };
 
+var movecarettoend = function(element){
+    var selection = window.getSelection()                       ;
+
+    if (selection.rangeCount > 0) selection.removeAllRanges()   ;
+    selection.selectAllChildren(element)                        ;
+    selection.collapseToEnd()                                   ;
+};
+
+var isprintablekey = function(keyCode){
+    return ((keyCode >= 48 && keyCode <=90) || (keyCode >= 96 && keyCode <=111) || (keyCode >= 186 && keyCode <=192) || (keyCode >= 219 && keyCode <=222) || keyCode === 32)
+};
+
+var isthecaretattheendofthecell =  function(element){
+    var cellChildNodes  = element.childNodes                    ;
+    var selection       = window.getSelection()                 ;
+    var result          = false                                 ;
+
+    var lastnode = function(nodeList){
+        return nodeList[nodeList.length - 1]                    ;
+    };
+
+    if (selection.isCollapsed && selection.type === "Caret"){
+        console.log(selection.anchorNode.isSameNode(lastnode(cellChildNodes)));
+        console.log(selection.anchorNode.textContent.length === selection.anchorOffset);
+        console.log(selection.anchorNode.isSameNode(element));
+        console.log(selection.anchorOffset === (cellChildNodes.length - 1));
+        if(selection.anchorNode.isSameNode(lastnode(cellChildNodes)) && selection.anchorNode.textContent.length === selection.anchorOffset){
+            result = true;
+        } else if (selection.anchorNode.isSameNode(element) && selection.anchorOffset === (cellChildNodes.length - 1)){
+            result = true;
+        }
+    }
+    console.log(result);
+    console.log(cellChildNodes);
+    console.log(selection);
+
+    return result;
+};
+
 var keyboardinputwhenincell = function(element, event) {
 
-    var enterKey = 13                                           ;
-    var arrowUp  = 38                                           ;
-    var arrowDw  = 40                                           ;
-    var $thisrow = $(element).parents('tr')                     ;
+    var backSpaceKey    = 8                                     ;
+    var enterKey        = 13                                    ;
+    var arrowUp         = 38                                    ;
+    var arrowDw         = 40                                    ;
+    var delKey          = 46                                    ;
+    var $thisrow        = $(element).parents('tr')              ;
+    var celltext        = $(element).text()                     ;
 
-    if (event.keyCode === enterKey && !event.altKey){
+    if (event.keyCode === enterKey && !event.altKey && celltext.length > 0){
         if ($thisrow.is(':last-child')){
             addrow(element)                                     ;
         } else{
             $("td:nth-child(2)", $thisrow.next()).focus()       ;
         }
         event.preventDefault()                                  ;
-    } else if (event.keyCode === enterKey && event.altKey){
-        $(element).append("<br><br>")                           ;
-        event.preventDefault()                                  ;
-    } else if (event.keyCode === arrowDw && !($thisrow.is(':last-child'))){
+    }  else if (event.keyCode === arrowDw && !($thisrow.is(':last-child'))){
         $("td:nth-child(2)", $thisrow.next()).focus()           ;
         event.preventDefault()                                  ;
     } else if (event.keyCode === arrowUp && !($thisrow.is(':first-child'))){
         $("td:nth-child(2)", $thisrow.prev()).focus()           ;
         event.preventDefault()                                  ;
-    }
+    } /*else if (celltext.length > 0 && element.lastChild.nodeName === "BR" && isprintablekey(event.keyCode) && isthecaretattheendofthecell(element)) {
+        event.preventDefault()                                  ;
+        console.log(event);
+        $(element).append(String.fromCharCode(event.keyCode))              ;
+        movecarettoend(element)                                 ;
+    } else if (event.keyCode === enterKey && event.altKey && celltext.length > 0){
+        event.preventDefault()                                  ;
+        $(element).append("<br><br>")                               ;
+        movecarettoend(element)                                 ;
+    }*/
 
+    //isthecaretattheendofthecell(element);
+    //console.log(isprintablekey(event.keyCode) && isthecaretattheendofthecell(element));
+
+    if ((event.keyCode === backSpaceKey || event.keyCode === delKey) && celltext.length === 1){
+        event.preventDefault()                                  ;
+        $(element).empty()                                      ;
+    }
 };
 
 var onfocuscell = function(element, event){
     var celltext = $(element).text()                            ;
 
     if (celltext.length > 0){
-        var selection = window.getSelection()                   ;
-
-        if (selection.rangeCount > 0) selection.removeAllRanges();
-        selection.selectAllChildren(element)                    ;
-        selection.collapseToEnd()                               ;
+        movecarettoend(element)                                 ;
+    } else {
+        $(element).empty()                                      ;
     }
 };
 
@@ -83,7 +139,7 @@ var main = function(){
     "use strict"                                                ;
 
     var tableID     = ["achievements", "news", "issues-concerns", "meeting_conclusions", "future_meetings"              ];
-    var tabTXT      = ["Achievements", "News", "Issues/Concerns", "Meeting conclusions", "Important meetings to come"   ];
+    var tabTXT      = ["Achievements", "News", "Issues/Concerns", "Meeting conclusions", "Meetings to come"   ];
 
     var $maintabs   = $("main .tabs")                           ;
     var $maintables = $("main .content")                        ;
